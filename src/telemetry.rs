@@ -1,8 +1,6 @@
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter};
 
-
-
 pub fn init_tracing_subscriber() {
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         // axum logs rejections from built-in extractors with the `axum::rejection`
