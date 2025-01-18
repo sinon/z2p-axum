@@ -62,7 +62,7 @@ jobs:
           PGPASSWORD="password" psql -U "postgres" -h "localhost" -c "${GRANT_QUERY}"
 
       - name: Migrate database
-        run: SKIP_DOCKER=true ./newsletter_api/scripts/init_db.sh
+        run: SKIP_DOCKER=true ./scripts/init_db.sh
       - name: cargo test --locked
         run: cargo test --locked --all-features --all-targets
       # https://github.com/rust-lang/cargo/issues/6669
