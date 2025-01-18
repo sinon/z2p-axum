@@ -6,7 +6,7 @@ use sqlx::PgPool;
 mod common;
 
 #[sqlx::test]
-async fn create_subscriber_works(db: PgPool) -> sqlx::Result<()> {
+async fn create_subscriber_works(_db: PgPool) -> sqlx::Result<()> {
     let test_app = common::spawn_app().await;
 
     let mut map = HashMap::new();
@@ -34,7 +34,7 @@ async fn create_subscriber_works(db: PgPool) -> sqlx::Result<()> {
 }
 
 #[sqlx::test]
-async fn create_subscriber_fails_when_data_is_missing(db: PgPool) -> sqlx::Result<()> {
+async fn create_subscriber_fails_when_data_is_missing(_db: PgPool) -> sqlx::Result<()> {
     let test_app = common::spawn_app().await;
 
     let map: HashMap<String, String> = HashMap::default();
@@ -51,7 +51,7 @@ async fn create_subscriber_fails_when_data_is_missing(db: PgPool) -> sqlx::Resul
 }
 
 #[sqlx::test]
-async fn create_subsciber_fails_duplicate_email(db: PgPool) -> sqlx::Result<()> {
+async fn create_subsciber_fails_duplicate_email(_db: PgPool) -> sqlx::Result<()> {
     let test_app = common::spawn_app().await;
 
     let mut map = HashMap::new();

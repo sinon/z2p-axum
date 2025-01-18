@@ -21,6 +21,7 @@ env:
   APP_USER: app
   APP_USER_PWD: secret
   APP_DB_NAME: newsletter
+  DATABASE_URL: postgres://app:secret@localhost:5432/newsletter
 jobs:
   required:
     runs-on: ubuntu-latest
