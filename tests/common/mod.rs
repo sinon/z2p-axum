@@ -1,7 +1,18 @@
 use newsletter_api::configuration::get_configuration;
 use newsletter_api::configuration::DatabaseSettings;
+use newsletter_api::telemetry::init_tracing_subscriber;
+use once_cell::sync::Lazy;
 use sqlx::{types::Uuid, Connection, Executor, PgConnection, PgPool};
 use tokio::net::TcpListener;
+
+// Ensure that the `tracing` stack is only initialised once using `once_cell`
+static TRACING: Lazy<()> = Lazy::new(|| {
+    let log_level = match std::env::var("TEST_LOG_LEVEL") {
+        Ok(l) => l,
+        Err(_) => "off".to_string(),
+    };
+    init_tracing_subscriber(&log_level).unwrap();
+});
 
 pub struct TestApp {
     pub address: String,
@@ -10,6 +21,7 @@ pub struct TestApp {
 
 #[cfg(test)]
 pub async fn spawn_app() -> TestApp {
+    Lazy::force(&TRACING);
     let listener = TcpListener::bind("127.0.0.1:0")
         .await
         .expect("Failed to bind random port");
@@ -32,6 +44,7 @@ pub async fn spawn_app() -> TestApp {
     }
 }
 
+#[cfg(test)]
 async fn configure_database(config: &DatabaseSettings) -> PgPool {
     // Create database
     let maintenance_settings = DatabaseSettings {

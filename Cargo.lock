@@ -1267,6 +1267,7 @@ dependencies = [
  "config",
  "hyper",
  "miette",
+ "once_cell",
  "reqwest",
  "serde",
  "serde_json",

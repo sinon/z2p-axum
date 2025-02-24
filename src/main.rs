@@ -8,7 +8,7 @@ use sqlx::PgPool;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    init_tracing_subscriber();
+    init_tracing_subscriber("info")?;
     tracing::debug!("Retrieving service configuration...");
     let configuration = get_configuration().expect("Failed to read configuration.");
     tracing::debug!("Connecting to postgres");
