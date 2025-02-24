@@ -4,6 +4,7 @@ use miette::{IntoDiagnostic, Result};
 use newsletter_api::{
     configuration::get_configuration, startup::generate_routes, telemetry::init_tracing_subscriber,
 };
+use secrecy::ExposeSecret;
 use sqlx::PgPool;
 
 #[tokio::main]
@@ -12,9 +13,10 @@ async fn main() -> Result<()> {
     tracing::debug!("Retrieving service configuration...");
     let configuration = get_configuration().expect("Failed to read configuration.");
     tracing::debug!("Connecting to postgres");
-    let connection_pool = PgPool::connect(&configuration.database.connection_string())
-        .await
-        .into_diagnostic()?;
+    let connection_pool =
+        PgPool::connect(&configuration.database.connection_string().expose_secret())
+            .await
+            .into_diagnostic()?;
     tracing::debug!("Running DB migrations");
     sqlx::migrate!()
         .run(&connection_pool)

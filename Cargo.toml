@@ -31,6 +31,7 @@ sqlx = { version = "0.8", default-features = false, features = [
 uuid = { version = "1", features = ["v4", "serde"] }
 config = { version = "0.14", default-features = false, features = ["yaml"] }
 miette = "7.2.0"
+secrecy = { version = "0.10.3", features = ["serde"] }
 
 [dev-dependencies]
 reqwest = { version = "0.11", features = ["json"] }
