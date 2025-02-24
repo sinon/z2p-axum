@@ -21,7 +21,6 @@ struct Subscriber {
     name = "Adding a new subscriber",
     skip(new_subscriber, _state),
     fields(
-        request_id = %Uuid::new_v4(),
         subscriber_email = %new_subscriber.email,
         subscriber_name = %new_subscriber.name
     )
