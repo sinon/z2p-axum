@@ -1,9 +1,9 @@
-use newsletter_api::configuration::get_configuration;
-use newsletter_api::configuration::DatabaseSettings;
-use newsletter_api::telemetry::init_tracing_subscriber;
 use once_cell::sync::Lazy;
 use sqlx::{types::Uuid, Connection, Executor, PgConnection, PgPool};
 use tokio::net::TcpListener;
+use z2p_axum::configuration::get_configuration;
+use z2p_axum::configuration::DatabaseSettings;
+use z2p_axum::telemetry::init_tracing_subscriber;
 
 // Ensure that the `tracing` stack is only initialised once using `once_cell`
 static TRACING: Lazy<()> = Lazy::new(|| {
@@ -34,7 +34,7 @@ pub async fn spawn_app() -> TestApp {
     let mut configuration = get_configuration().expect("Failed to read configuration.");
     configuration.database.database_name = Uuid::new_v4().to_string();
     let connection_pool = configure_database(&configuration.database).await;
-    let server = newsletter_api::startup::run(port, connection_pool.clone())
+    let server = z2p_axum::startup::run(port, connection_pool.clone())
         .await
         .unwrap();
     let _ = tokio::spawn(server);

@@ -1,5 +1,5 @@
 [package]
-name = "newsletter_api"
+name = "z2p_axum"
 edition = "2021"
 
 [lib]
@@ -7,7 +7,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "newsletter_api"
+name = "z2p_axum"
 
 
 [dependencies]

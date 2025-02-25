@@ -15,3 +15,9 @@ t:test
 
 lox_run:build
     cargo run run test.lox 
+
+docker_build:
+    docker build --tag z2p-axum --file Dockerfile .
+
+docker_run:
+    docker run -p 8000:8000 z2p-axum
