@@ -1,11 +1,11 @@
 use std::net::SocketAddr;
 
 use axum::{
-    body::Body,
-    routing::{get, IntoMakeService},
     Error, Router,
+    body::Body,
+    routing::{IntoMakeService, get},
 };
-use hyper::{server::conn::AddrIncoming, Request};
+use hyper::{Request, server::conn::AddrIncoming};
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 use tracing::Level;

@@ -16,4 +16,4 @@ DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo run
 
 ## Debugging
 
-`RUST_LOG="info,tower_http=debug"`RUST_LOG="info,tower_http=debug"`
+`RUST_LOG="info,tower_http=debug"`

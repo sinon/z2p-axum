@@ -1,8 +1,8 @@
 use once_cell::sync::Lazy;
-use sqlx::{types::Uuid, Connection, Executor, PgConnection, PgPool};
+use sqlx::{Connection, Executor, PgConnection, PgPool, types::Uuid};
 use tokio::net::TcpListener;
-use z2p_axum::configuration::get_configuration;
 use z2p_axum::configuration::DatabaseSettings;
+use z2p_axum::configuration::get_configuration;
 use z2p_axum::telemetry::init_tracing_subscriber;
 
 // Ensure that the `tracing` stack is only initialised once using `once_cell`

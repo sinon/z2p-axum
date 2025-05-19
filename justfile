@@ -4,17 +4,14 @@ build:
 format:
         @cargo fmt --version
         cargo fmt
-lint:
+lint:format
         @cargo clippy --version
         cargo clippy -- -D warnings
-        cargo doc
+        cargo doc --no-deps
 test:
     cargo nextest run --all-targets --no-fail-fast
 
 t:test
-
-lox_run:build
-    cargo run run test.lox 
 
 docker_build:
     docker build --tag z2p-axum --file Dockerfile .
