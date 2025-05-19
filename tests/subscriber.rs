@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use hyper::StatusCode;
+use rstest::rstest;
 use sqlx::PgPool;
 
 mod common;
@@ -82,4 +83,37 @@ async fn create_subsciber_fails_duplicate_email(_db: PgPool) -> sqlx::Result<()>
         .expect("Failed to execute request.");
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
     Ok(())
+}
+
+#[rstest]
+#[case("", "ursula_le_guin%40gmail.com", "empty name")]
+#[case("Ursula", "", "empty email")]
+#[case("Ursula", "definitely-not-an-email", "invalid email")]
+#[sqlx::test]
+async fn subscribe_returns_a_200_when_fields_are_present_but_empty(
+    #[case] name: String,
+    #[case] email: String,
+    #[case] error_description: String,
+    #[ignore] _db: PgPool,
+) {
+    let test_app = common::spawn_app().await;
+    let client = reqwest::Client::new();
+
+    let mut map = HashMap::new();
+    map.insert("email", email);
+    map.insert("name", name);
+
+    let response = client
+        .post(&format!("{}/api/subscriber", &test_app.address))
+        .json(&map)
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(
+        400,
+        response.status().as_u16(),
+        "The API did not return a 400 when the payload was {}.",
+        error_description
+    );
 }
