@@ -1,16 +1,27 @@
 use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, Pool, Postgres, types::Uuid};
-use validator::Validate;
+use validator::{Validate, ValidationError};
 
 use crate::startup::AppState;
 
 #[derive(Deserialize, Validate)]
 pub struct CreateSubscriber {
-    #[validate(length(min = 3, message = "name is required", max = 256))]
+    #[validate(
+        length(min = 3, message = "name is required", max = 256),
+        custom(function = "validate_no_illegal_chars")
+    )]
     pub name: String,
     #[validate(email)]
     pub email: String,
+}
+
+fn validate_no_illegal_chars(name: &str) -> Result<(), ValidationError> {
+    let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
+    if name.chars().any(|g| forbidden_characters.contains(&g)) {
+        return Err(ValidationError::new("contains illegal characters"));
+    }
+    Ok(())
 }
 
 #[derive(Serialize, FromRow)]
@@ -70,13 +81,12 @@ mod tests {
 
     use super::CreateSubscriber;
 
-    // TODO: Investigate if validate can be made utf-8 aware
-    // #[test]
-    // fn a_256_grapheme_long_name_is_valid() {
-    //     let name = "ё".repeat(256);
-    //     let email = "email@example.com".to_string();
-    //     assert!(CreateSubscriber { name, email }.validate().is_err());
-    // }
+    #[test]
+    fn a_256_grapheme_long_name_is_valid() {
+        let name = "ё".repeat(256);
+        let email = "email@example.com".to_string();
+        assert!(CreateSubscriber { name, email }.validate().is_ok());
+    }
 
     #[test]
     fn a_name_longer_than_256_graphemes_is_rejected() {
@@ -102,7 +112,7 @@ mod tests {
     #[test]
     fn names_containing_an_invalid_character_are_rejected() {
         for name in &['/', '(', ')', '"', '<', '>', '\\', '{', '}'] {
-            let name = name.to_string();
+            let name = format!("{}XXXX", name);
             let email = "email@example.com".to_string();
             assert!(CreateSubscriber { name, email }.validate().is_err());
         }
