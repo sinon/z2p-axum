@@ -13,6 +13,16 @@ test:
 
 t:test
 
+init_db:
+    sh ./scripts/init_db.sh
+
+migrate:
+	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo sqlx migrate run
+test:
+	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo test
+run:
+	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo run
+
 docker_build:
     docker build --tag z2p-axum --file Dockerfile .
 
