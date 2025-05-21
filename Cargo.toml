@@ -33,6 +33,7 @@ config = { version = "0.14", default-features = false, features = ["yaml"] }
 miette = "7.2.0"
 secrecy = { version = "0.10.3", features = ["serde"] }
 validator = { version = "0.20", features = ["derive"] }
+snafu = "0.8.5"
 
 [dev-dependencies]
 reqwest = { version = "0.11", features = ["json"] }

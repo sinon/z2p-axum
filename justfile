@@ -9,6 +9,7 @@ lint:format
         cargo clippy -- -D warnings
         cargo doc --no-deps
 test:
+    DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter 
     cargo nextest run --all-targets --no-fail-fast
 
 t:test
@@ -18,8 +19,6 @@ init_db:
 
 migrate:
 	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo sqlx migrate run
-test:
-	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo test
 run:
 	DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter cargo run
 
