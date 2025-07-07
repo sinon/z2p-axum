@@ -1,17 +1,9 @@
-use crate::domain::SubscriberName;
+use crate::domain::{CreateSubscriber, SubscriberEmail, SubscriberName};
 use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{FromRow, Pool, Postgres, types::Uuid};
-use validator::Validate;
 
 use crate::startup::AppState;
-
-#[derive(Deserialize, Validate)]
-pub struct CreateSubscriber {
-    pub name: SubscriberName,
-    #[validate(email)]
-    pub email: String,
-}
 
 #[derive(Serialize, FromRow)]
 struct Subscriber {
@@ -35,7 +27,7 @@ pub async fn create_subscriber(
     if let Err(_e) = SubscriberName::parse(new_subscriber.name.as_ref().to_string()) {
         return Err((StatusCode::BAD_REQUEST, "Validation Error".to_string()));
     }
-    if let Err(_e) = new_subscriber.validate() {
+    if let Err(_e) = SubscriberEmail::parse(new_subscriber.email.as_ref().to_string()) {
         return Err((StatusCode::BAD_REQUEST, "Validation Error".to_string()));
     }
     match insert_subscriber(&new_subscriber, &state.pool).await {
@@ -56,7 +48,7 @@ async fn insert_subscriber(
         Subscriber,
         "insert into subscriber (name, email) values ($1, $2) returning id, name, email",
         subscriber.name.as_ref(),
-        subscriber.email,
+        subscriber.email.as_ref(),
     )
     .fetch_one(pool)
     .await
