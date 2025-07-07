@@ -37,6 +37,9 @@ impl Display for SubscriberEmail {
 
 #[cfg(test)]
 mod tests {
+    use fake::{Fake, faker::internet::en::SafeEmail, rand::rngs::StdRng};
+    use rand::SeedableRng;
+
     use super::SubscriberEmail;
 
     #[test]
@@ -61,5 +64,21 @@ mod tests {
     fn email_valid() {
         let email = "ursula@domain.com".to_string();
         assert!(SubscriberEmail::parse(email).is_ok());
+    }
+
+    #[derive(Debug, Clone)]
+    struct ValidEmailFixture(pub String);
+
+    impl quickcheck::Arbitrary for ValidEmailFixture {
+        fn arbitrary(g: &mut quickcheck::Gen) -> Self {
+            let mut rng = StdRng::seed_from_u64(u64::arbitrary(g));
+            let email = SafeEmail().fake_with_rng(&mut rng);
+            Self(email)
+        }
+    }
+
+    #[quickcheck_macros::quickcheck]
+    fn valid_emails_are_parsed_successfully(valid_email: ValidEmailFixture) -> bool {
+        SubscriberEmail::parse(valid_email.0).is_ok()
     }
 }
