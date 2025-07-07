@@ -1,11 +1,5 @@
-use std::net::SocketAddr;
-
-use axum::{
-    Error, Router,
-    body::Body,
-    routing::{IntoMakeService, get},
-};
-use hyper::{Request, server::conn::AddrIncoming};
+use axum::{Router, body::Body, routing::get};
+use hyper::Request;
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 use tracing::Level;
@@ -36,14 +30,4 @@ pub fn generate_routes(pool: PgPool) -> Router {
             }),
         )
         .with_state(state)
-}
-
-pub async fn run(
-    port: u16,
-    db_pool: PgPool,
-) -> Result<axum::Server<AddrIncoming, IntoMakeService<Router>>, Error> {
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
-    let server: hyper::Server<hyper::server::conn::AddrIncoming, IntoMakeService<Router>> =
-        axum::Server::bind(&addr).serve(generate_routes(db_pool).into_make_service());
-    Ok(server)
 }

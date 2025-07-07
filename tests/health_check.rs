@@ -8,7 +8,7 @@ async fn health_check_works(_db: PgPool) {
 
     let client = reqwest::Client::new();
     let response = client
-        .get(&format!("{}/healthcheck", &test_app.address))
+        .get(format!("{}/healthcheck", &test_app.address))
         .send()
         .await
         .expect("Failed to execute request.");

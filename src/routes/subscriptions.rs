@@ -22,20 +22,23 @@ struct Subscriber {
 
 #[tracing::instrument(
     name = "Adding a new subscriber",
-    skip(new_subscriber, _state),
+    skip(new_subscriber, state),
     fields(
         subscriber_email = %new_subscriber.email,
         subscriber_name = %new_subscriber.name
     )
 )]
 pub async fn create_subscriber(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     Json(new_subscriber): Json<CreateSubscriber>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
+    if let Err(_e) = SubscriberName::parse(new_subscriber.name.as_ref().to_string()) {
+        return Err((StatusCode::BAD_REQUEST, "Validation Error".to_string()));
+    }
     if let Err(_e) = new_subscriber.validate() {
         return Err((StatusCode::BAD_REQUEST, "Validation Error".to_string()));
     }
-    match insert_subscriber(&new_subscriber, &_state.pool).await {
+    match insert_subscriber(&new_subscriber, &state.pool).await {
         Ok(subscriber) => Ok((StatusCode::CREATED, Json(subscriber))),
         Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
     }

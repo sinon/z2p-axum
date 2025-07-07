@@ -22,6 +22,7 @@ pub struct DatabaseSettings {
 }
 
 impl DatabaseSettings {
+    #[must_use]
     pub fn connection_string(&self) -> SecretBox<String> {
         SecretBox::new(Box::new(format!(
             "postgres://{}:{}@{}:{}/{}",
@@ -34,6 +35,13 @@ impl DatabaseSettings {
     }
 }
 
+/// Retrieves the configuration from env vars and file
+/// # Panics
+///
+///  If `std::env::current_dir()` returns an error.
+/// # Errors
+///
+/// `ConfigError` If the setting file fails to be deserialized
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("configuration");

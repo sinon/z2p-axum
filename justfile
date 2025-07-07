@@ -6,7 +6,7 @@ format:
         cargo fmt
 lint:format
         @cargo clippy --version
-        cargo clippy -- -D warnings
+        cargo clippy -- -D warnings -W clippy::pedantic -W clippy::nursery
         cargo doc --no-deps
 test:
     DATABASE_URL=postgres://postgres:password@localhost:5432/newsletter 

@@ -1,6 +1,7 @@
 [package]
 name = "z2p_axum"
 edition = "2024"
+rust-version = "1.88.0"
 
 [lib]
 path = "src/lib.rs"

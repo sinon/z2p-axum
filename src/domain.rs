@@ -16,6 +16,12 @@ impl Display for SubscriberName {
 impl SubscriberName {
     /// Returns an instance of `SubscriberName` if the input satisfies all
     /// our validation constraints on subscriber names.  
+    ///
+    /// # Errors
+    ///
+    /// - Supplied String is empty
+    /// - Supplied string is <3 or >256 characters
+    /// - Contains forbidden characters
     pub fn parse(s: String) -> Result<Self, Whatever> {
         let is_empty_or_whitespace = s.trim().is_empty();
         let name = Self(s);
@@ -71,14 +77,14 @@ mod tests {
 
     #[test]
     fn empty_string_is_rejected() {
-        let name = "".to_string();
+        let name = String::new();
         assert!(SubscriberName::parse(name).is_err());
     }
 
     #[test]
     fn names_containing_an_invalid_character_are_rejected() {
         for name in &['/', '(', ')', '"', '<', '>', '\\', '{', '}'] {
-            let name = format!("{}XXXX", name);
+            let name = format!("{name}XXXX");
             assert!(SubscriberName::parse(name).is_err());
         }
     }

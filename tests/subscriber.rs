@@ -16,7 +16,7 @@ async fn create_subscriber_works(_db: PgPool) -> sqlx::Result<()> {
 
     let client = reqwest::Client::new();
     let response = client
-        .post(&format!("{}/api/subscriber", &test_app.address))
+        .post(format!("{}/api/subscriber", &test_app.address))
         .json(&map)
         .send()
         .await
@@ -41,7 +41,7 @@ async fn create_subscriber_fails_when_data_is_missing(_db: PgPool) -> sqlx::Resu
     let map: HashMap<String, String> = HashMap::default();
     let client = reqwest::Client::new();
     let response = client
-        .post(&format!("{}/api/subscriber", &test_app.address))
+        .post(format!("{}/api/subscriber", &test_app.address))
         .json(&map)
         .send()
         .await
@@ -61,7 +61,7 @@ async fn create_subsciber_fails_duplicate_email(_db: PgPool) -> sqlx::Result<()>
 
     let client = reqwest::Client::new();
     let response = client
-        .post(&format!("{}/api/subscriber", &test_app.address))
+        .post(format!("{}/api/subscriber", &test_app.address))
         .json(&map)
         .send()
         .await
@@ -76,7 +76,7 @@ async fn create_subsciber_fails_duplicate_email(_db: PgPool) -> sqlx::Result<()>
 
     common::expect_uuid(&resp_json["id"]);
     let response = client
-        .post(&format!("{}/api/subscriber", &test_app.address))
+        .post(format!("{}/api/subscriber", &test_app.address))
         .json(&map)
         .send()
         .await
@@ -104,7 +104,7 @@ async fn subscribe_returns_a_200_when_fields_are_present_but_empty(
     map.insert("name", name);
 
     let response = client
-        .post(&format!("{}/api/subscriber", &test_app.address))
+        .post(format!("{}/api/subscriber", &test_app.address))
         .json(&map)
         .send()
         .await
@@ -113,7 +113,6 @@ async fn subscribe_returns_a_200_when_fields_are_present_but_empty(
     assert_eq!(
         400,
         response.status().as_u16(),
-        "The API did not return a 400 when the payload was {}.",
-        error_description
+        "The API did not return a 400 when the payload was {error_description}."
     );
 }
